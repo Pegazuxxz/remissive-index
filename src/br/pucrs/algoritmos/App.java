@@ -1,8 +1,10 @@
 package br.pucrs.algoritmos;
 
+import br.pucrs.algoritmos.files.Readers;
 import br.pucrs.algoritmos.lists.LinkedListOfString;
 import br.pucrs.algoritmos.lists.LinkedListOfWord;
 import br.pucrs.algoritmos.lists.ListArrayOfString;
+import br.pucrs.algoritmos.lists.ListArrayOfWords;
 import br.pucrs.algoritmos.word.Word;
 
 import java.io.BufferedReader;
@@ -20,23 +22,32 @@ import java.util.Scanner;
 public class App {
 
     public static void main(String args[]) {
-        Scanner sc = new Scanner(System.in);
-        System.out.println("Please, tell me what is book that you want to read:");
-        String file = sc.nextLine().toLowerCase().trim();
+//        Scanner sc = new Scanner(System.in);
+//        System.out.println("Please, tell me what is book that you want to read:");
+//        String file = sc.nextLine().toLowerCase().trim();
+//
+//        LinkedListOfString listOfStopWords = readStopWordsFromFile();
+//        LinkedListOfWord linesOfWords = null;
+//
+//        while (Objects.isNull(linesOfWords = readWordsFromBook(listOfStopWords, file))) {
+//            System.out.println("File not exists!\n\n");
+//            System.out.println("Please, tell me again what is book that you want to read:");
+//            file = sc.nextLine().toLowerCase().trim();
+//        }
+//
+//        for(int i = 0; i < linesOfWords.size();i++){
+//            System.out.println(linesOfWords.get(i));
+//        }
 
-        LinkedListOfString listOfStopWords = readStopWordsFromFile();
-        LinkedListOfWord linesOfWords = null;
-
-        while (Objects.isNull(linesOfWords = readWordsFromBook(listOfStopWords, file))) {
-            System.out.println("File not exists!\n\n");
-            System.out.println("Please, tell me again what is book that you want to read:");
-            file = sc.nextLine().toLowerCase().trim();
-        }
-
-        for(int i = 0; i < linesOfWords.size();i++){
-            System.out.println(linesOfWords.get(i));
-        }
-
+    	ListArrayOfString stopWordsList = new ListArrayOfString();
+    	ListArrayOfWords wordsList = new ListArrayOfWords();
+    	Readers readers = new Readers();
+    	
+    	readers.readBookWordsToList(wordsList);
+    	
+    	for(int i = 0; i < wordsList.size(); i++){
+    		System.out.println(wordsList.get(i).getWord());
+    	}
 
     }
 
