@@ -1,245 +1,167 @@
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by Fernflower decompiler)
+//
+
 package br.pucrs.algoritmos.lists;
 
-public class ListArrayOfInteger implements List<Integer>{
-
+public class ListArrayOfInteger implements List<Integer> {
     private static final int INITIAL_SIZE = 10;
     private Integer[] data;
     private int count;
 
-    /**
-     * Construtor da lista
-     */
     public ListArrayOfInteger() {
-        this(INITIAL_SIZE);
+        this(10);
     }
 
-    /**
-     * Construtor da lista
-     *
-     * @param tam tamanho inicial a ser alocado para a lista
-     */
     public ListArrayOfInteger(int tam) {
-        if (tam <= 0) {
-            tam = INITIAL_SIZE;
+        if(tam <= 0) {
+            tam = 10;
         }
-        data = new Integer[tam];
-        count = 0;
+
+        this.data = new Integer[tam];
+        this.count = 0;
     }
 
-    /**
-     * Esvazia a lista
-     */
-    @Override
     public void clear() {
-        data = new Integer[INITIAL_SIZE];
-        count = 0;
+        this.data = new Integer[10];
+        this.count = 0;
     }
 
-    /**
-     * Retorna true se a lista não contêm elementos
-     *
-     * @return true se a lista não contêm elementos
-     */
-    @Override
     public boolean isEmpty() {
-        return (count == 0);
+        return this.count == 0;
     }
 
-    /**
-     * Retorna o número de elementos da lista
-     *
-     * @return o número de elementos da lista
-     */
-    @Override
     public Integer size() {
-        return count;
+        return Integer.valueOf(this.count);
     }
 
-    /**
-     * Adiciona um elemento ao final da lista
-     *
-     * @param element elemento a ser adicionado ao final da lista
-     */
-    @Override
     public void add(Integer element) {
-        if (count == data.length) {
-            setCapacity(data.length * 2);
+        if(this.count == this.data.length) {
+            this.setCapacity(this.data.length * 2);
         }
-        data[count] = element;
-        count++;
+
+        this.data[this.count] = element;
+        ++this.count;
     }
 
-    /**
-     * Insere um elemento em uma determinada posição da lista
-     *
-     * @param index   a posição da lista onde o elemento será inserido
-     * @param element elemento a ser inserido
-     * @throws IndexOutOfBoundsException se (index < 0 || index > size())
-     */
-    @Override
     public void add(Integer index, Integer element) {
+        if(index.intValue() >= 0 && index.intValue() <= this.size().intValue()) {
+            if(this.count == this.data.length) {
+                this.setCapacity(this.data.length * 2);
+            }
 
-        if (index < 0 || index > size()) {
+            for(int i = this.count; i > index.intValue(); --i) {
+                this.data[i] = this.data[i - 1];
+            }
+
+            this.data[index.intValue()] = element;
+            ++this.count;
+        } else {
             throw new IndexOutOfBoundsException();
         }
-
-        if (count == data.length) {
-            setCapacity(data.length * 2);
-        }
-
-        for (int i = count; i > index; i--) {
-            data[i] = data[i - 1];
-        }
-        data[index] = element;
-        count++;
     }
 
-    /**
-     * Remove o elemento de uma determinada posição da lista
-     *
-     * @param index a posição da lista
-     * @return o elemento que foi removido da lista
-     * @throws IndexOutOfBoundsException se (index < 0 || index >= size())
-     */
-    @Override
     public Integer removeByIndex(Integer index) {
-        if (index < 0 || index >= size()) {
+        if(index.intValue() >= 0 && index.intValue() < this.size().intValue()) {
+            int aux = this.data[index.intValue()].intValue();
+
+            for(int i = index.intValue(); i < this.count - 1; ++i) {
+                this.data[i] = this.data[i + 1];
+            }
+
+            this.data[this.count - 1] = null;
+            --this.count;
+            return Integer.valueOf(aux);
+        } else {
             throw new IndexOutOfBoundsException();
         }
-
-        int aux = data[index];
-
-        for (int i = index; i < count - 1; i++) {
-            data[i] = data[i + 1];
-        }
-
-        data[count - 1] = null;
-        count--;
-
-        return aux;
     }
 
-    /**
-     * Remove a primeira ocorrência do elemento na lista, se estiver presente
-     *
-     * @param element o elemento a ser removido
-     * @return true se a lista contém o elemento especificado
-     */
-    @Override
     public boolean remove(Integer element) {
-
-        for (int i = 0; i < count; i++) {
-
-            if (element.equals(data[i])) {
-                for (int j = i; j < count - 1; j++) {
-                    data[j] = data[j + 1];
+        for(int i = 0; i < this.count; ++i) {
+            if(element.equals(this.data[i])) {
+                for(int j = i; j < this.count - 1; ++j) {
+                    this.data[j] = this.data[j + 1];
                 }
-                data[count - 1] = null;
-                count--;
+
+                this.data[this.count - 1] = null;
+                --this.count;
                 return true;
             }
         }
+
         return false;
     }
 
-    /**
-     * Retorna o elemento de uma determinada posição da lista
-     *
-     * @param index a posição da lista
-     * @return o elemento da posição especificada
-     * @throws IndexOutOfBoundsException se (index < 0 || index >= size())
-     */
-    @Override
     public Integer get(Integer index) {
-        if ((index < 0) || (index >= count)) {
+        if(index.intValue() >= 0 && index.intValue() < this.count) {
+            return this.data[index.intValue()];
+        } else {
             throw new IndexOutOfBoundsException("Index = " + index);
         }
-        return data[index];
     }
 
-    /**
-     * Substitui o elemento armanzenado em uma determinada posição da lista pelo
-     * elemento indicado
-     *
-     * @param index   a posição da lista
-     * @param element o elemento a ser armazenado na lista
-     * @return o elemento armazenado anteriormente na posição da lista
-     * @throws IndexOutOfBoundsException se (index < 0 || index >= size())
-     */
-    @Override
     public Integer set(Integer index, Integer element) {
-        if ((index < 0) || (index >= count)) {
+        if(index.intValue() >= 0 && index.intValue() < this.count) {
+            int item = this.data[index.intValue()].intValue();
+            this.data[index.intValue()] = element;
+            return Integer.valueOf(item);
+        } else {
             throw new IndexOutOfBoundsException("Index = " + index);
         }
-        int item = data[index];
-        data[index] = element;
-        return item;
     }
 
-    /**
-     * Retorna true se a lista contém o elemento especificado
-     *
-     * @param element o elemento a ser testado
-     * @return true se a lista contém o elemento especificado
-     */
-    @Override
     public boolean contains(Integer element) {
-        for (int p = 0; p < count; p++) {
-            if (data[p].equals(element)) {
+        for(int p = 0; p < this.count; ++p) {
+            if(this.data[p].equals(element)) {
                 return true;
             }
         }
-        // Neste ponto, não achou: retorna falso
+
         return false;
     }
 
-    /**
-     * Retorna o índice da primeira ocorrência do elemento na lista, ou -1 se a
-     * lista não contém o elemento
-     *
-     * @param element o elemento a ser buscado
-     * @return o índice da primeira ocorrência do elemento na lista, ou -1 se a
-     * lista não contém o elemento
-     */
-    @Override
     public Integer indexOf(Integer element) {
-        // Procura elemento no array, se achar retorna
-        for (int i = 0; i < count; i++) {
-            if (data[i].equals(element)) {
-                return i;
+        for(int i = 0; i < this.count; ++i) {
+            if(this.data[i].equals(element)) {
+                return Integer.valueOf(i);
             }
         }
-        // Neste ponto, não achou: retorna -1
-        return -1;
+
+        return Integer.valueOf(-1);
     }
 
-    @Override
     public String toString() {
         StringBuilder s = new StringBuilder();
-        for (int i = 0; i < count; i++) {
-            s.append(data[i]);
-            if (i != (count - 1)) {
+
+        for(int i = 0; i < this.count; ++i) {
+            s.append(this.data[i]);
+            if(i != this.count - 1) {
                 s.append(",");
             }
         }
+
         s.append("\n");
         return s.toString();
     }
 
     private void setCapacity(int newCapacity) {
-        if (newCapacity != data.length) {
-            int min = 0;
+        if(newCapacity != this.data.length) {
             Integer[] newData = new Integer[newCapacity];
-            if (data.length < newCapacity) {
-                min = data.length;
+            int min;
+            if(this.data.length < newCapacity) {
+                min = this.data.length;
             } else {
                 min = newCapacity;
             }
-            for (int i = 0; i < min; i++) {
-                newData[i] = data[i];
-            }
-            data = newData;
-        }
-    }
 
+            for(int i = 0; i < min; ++i) {
+                newData[i] = this.data[i];
+            }
+
+            this.data = newData;
+        }
+
+    }
 }

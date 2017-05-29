@@ -1,18 +1,11 @@
 package br.pucrs.algoritmos;
 
 import br.pucrs.algoritmos.files.Readers;
-import br.pucrs.algoritmos.lists.LinkedListOfString;
-import br.pucrs.algoritmos.lists.LinkedListOfWord;
-import br.pucrs.algoritmos.lists.ListArrayOfString;
-import br.pucrs.algoritmos.lists.ListArrayOfWords;
-import br.pucrs.algoritmos.word.Word;
+import br.pucrs.algoritmos.lists.LinkedListOfWords;
+import br.pucrs.algoritmos.lists.ListArrayOfInteger;
+import br.pucrs.algoritmos.lists.ListArrayOfPages;
+import br.pucrs.algoritmos.line.Page;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -20,84 +13,122 @@ import java.util.Scanner;
  * Created by Rodrigo on 21/05/2017.
  */
 public class App {
+    private static Readers readers;
+    private static LinkedListOfWords listOfWords;
 
     public static void main(String args[]) {
-//        Scanner sc = new Scanner(System.in);
-//        System.out.println("Please, tell me what is book that you want to read:");
-//        String file = sc.nextLine().toLowerCase().trim();
-//
-//        LinkedListOfString listOfStopWords = readStopWordsFromFile();
-//        LinkedListOfWord linesOfWords = null;
-//
-//        while (Objects.isNull(linesOfWords = readWordsFromBook(listOfStopWords, file))) {
-//            System.out.println("File not exists!\n\n");
-//            System.out.println("Please, tell me again what is book that you want to read:");
-//            file = sc.nextLine().toLowerCase().trim();
-//        }
-//
-//        for(int i = 0; i < linesOfWords.size();i++){
-//            System.out.println(linesOfWords.get(i));
-//        }
+        readers = new Readers();
+        listOfWords = new LinkedListOfWords();
+        openFile();
 
-    	ListArrayOfString stopWordsList = new ListArrayOfString();
-    	ListArrayOfWords wordsList = new ListArrayOfWords();
-    	Readers readers = new Readers();
-    	
-    	readers.readBookWordsToList(wordsList);
-    	
-    	for(int i = 0; i < wordsList.size(); i++){
-    		System.out.println(wordsList.get(i).getWord());
-    	}
+        Integer option = menuOptions();
+        doActionByOption(option);
 
     }
 
-    private static LinkedListOfString readStopWordsFromFile() {
-        LinkedListOfString listOfStopWords = new LinkedListOfString();
-        Path path = Paths.get("files/stopwords.txt");
-        /**
-         * Reading the stop words file
-         **/
-        try (BufferedReader reader = new BufferedReader(Files.newBufferedReader(path, Charset.forName("utf8")))) {
-            String stopWord;
+    public static void openFile() {
+        String fileName = null;
+        Boolean fileExists = false;
+        Scanner sc = new Scanner(System.in);
 
-            while (Objects.nonNull(stopWord = reader.readLine())) {
-                listOfStopWords.add(stopWord);
+        while (!fileExists) {
+            if (Objects.nonNull(fileName)) {
+                System.out.println("O arquivo solicitado, não existe!");
+                System.out.println("\n");
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Informe o nome do arquivo que deseja verificar as stopwords:");
+            fileName = sc.nextLine();
+
+            fileExists = readers.readBookWordsToList(listOfWords, fileName);
+        }
+    }
+
+    public static Integer menuOptions() {
+        Boolean correctOption = false;
+        ListArrayOfInteger validOptions = new ListArrayOfInteger(5);
+        validOptions.add(1);
+        validOptions.add(2);
+        validOptions.add(3);
+        validOptions.add(4);
+        validOptions.add(5);
+        Integer option = null;
+        Scanner sc = new Scanner(System.in);
+
+        while (!correctOption) {
+            if (Objects.nonNull(option)) {
+                System.out.println("Opção inválida!");
+                System.out.println("\n\n");
+            }
+
+            System.out.println("Por favor informe uma das opções abaixo:\n");
+            System.out.println("1 - Exibir todo o índice remissivo (em ordem alfabética)");
+            System.out.println("2 - Exibir o percentual de stopwords do texto (quanto % do texto é formado por stopwords)");
+            System.out.println("3 - Encontrar a palavra mais frequente, isto é, com maior número de ocorrências");
+            System.out.println("4 - Pesquisar palavra (o usuário informa uma palavra; o sistema mostra as páginas em que a palavra\n" +
+                    "ocorre; na sequência, o usuário escolhe a página; o sistema exibe a página na tela, circundando a\n" +
+                    "palavra informada com sinais de [ e ]);\n");
+            System.out.println("5 - Encontrar página complexa (o sistema descobre e informa a página que contém o maior número de\n" +
+                    "palavras indexadas, informando quantas são)");
+
+            try {
+                option = sc.nextInt();
+            } catch (NumberFormatException e) {
+                continue;
+            }
+
+            correctOption = validOptions.contains(option);
         }
 
-        return listOfStopWords;
+        return option;
     }
 
-    private static LinkedListOfWord readWordsFromBook(LinkedListOfString listOfStopWords, String fileName) {
-        Path path = Paths.get("files/".concat(fileName).concat(".txt"));
-        LinkedListOfWord linesOfWords = new LinkedListOfWord();
-        System.out.println("1");
-        /**
-         * Reading the book words
-         **/
-        try (Scanner sc = new Scanner(Files.newBufferedReader(path, Charset.forName("utf8")))) {
-            System.out.println("2");
-            String word = null;
+    private static void doActionByOption(Integer option) {
+        switch (option) {
+            case 1:
+                for (int i = 0; i < listOfWords.size(); i++) {
+                    System.out.println(listOfWords.get(i).toString());
+                }
 
-            while (sc.hasNextLine()) {
-                ListArrayOfString wordsPerLine = new ListArrayOfString();
-                Scanner sc2 = new Scanner(sc.nextLine());
-                sc2.useDelimiter("[ \n]");
-                while (sc.hasNext()) {
-                    word = sc.next().trim().toLowerCase().replaceAll("[^\\p{Alpha}\\p{Digit}]+","");
+                break;
+            case 2:
+                System.out.println(readers.getStopWordsPercentage());
 
-                    if (!listOfStopWords.contains(word)) {
-                        wordsPerLine.add(word);
+                break;
+            case 3:
+                StringBuilder builder = new StringBuilder();
+                builder.append("A palavra mais frequente é: ")
+                        .append(listOfWords.getFrequentlyWord())
+                        .append("\n\n")
+                        .append("Com o total de: ")
+                        .append(listOfWords.getFrequentlyWordOccurrencesCount())
+                        .append(" ")
+                        .append("ocorrências.");
+
+                System.out.println(builder.toString());
+
+                break;
+            case 4:
+                Scanner sc = new Scanner(System.in);
+                System.out.println("Digite a palavra que deseja encontrar:");
+                String word = sc.nextLine();
+                readers.searchWord(listOfWords, word);
+
+            case 5:
+                Page page = null;
+                Integer totalQuantity = 0;
+
+                for (int i = 0; i < listOfWords.size(); i++) {
+                    ListArrayOfPages pages = listOfWords.get(i).getPages();
+                    for (int j = 0; j < pages.size(); j++) {
+
+                        if (Objects.nonNull(pages.get(j)) && pages.get(j).getQuantity() > totalQuantity) {
+                            totalQuantity = pages.get(j).getQuantity();
+                            page = pages.get(j);
+                        }
                     }
                 }
-                linesOfWords.add(wordsPerLine);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
-        return linesOfWords;
+                System.out.println(page);
+        }
     }
 }

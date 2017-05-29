@@ -1,14 +1,16 @@
 package br.pucrs.algoritmos.lists;
 
-public class LinkedListOfString implements List<String>{
+import br.pucrs.algoritmos.line.Word;
+
+public class LinkedListOfWords {
 
     // Classe interna Node
     private class Node {
 
-        public String element;
+        public Word element;
         public Node next;
 
-        public Node(String element) {
+        public Node(Word element) {
             this.element = element;
             next = null;
         }
@@ -21,23 +23,28 @@ public class LinkedListOfString implements List<String>{
     // Contador para a quantidade de elementos que a lista contem.
     private int count;
 
+    private String frequentlyWord;
+    private Integer frequentlyWordOccurrencesCount;
+
     /**
      * Construtor da lista
      */
-    public LinkedListOfString() {
+    public LinkedListOfWords() {
         head = null;
         tail = null;
         count = 0;
+        this.frequentlyWordOccurrencesCount = 0;
     }
 
     /**
      * Adiciona um elemento ao final da lista
      *
-     * @param element elemento a ser adicionado ao final da lista
+     * @param word elemento a ser adicionado ao final da lista
      */
-    @Override
-    public void add(String element) {
-        Node aux = new Node(element);
+    public void add(Word word) {
+        Node aux = new Node(word);
+        Node ant = head;
+
         if (head == null) {
             head = aux;
         } else {
@@ -47,20 +54,44 @@ public class LinkedListOfString implements List<String>{
         count++;
     }
 
+    public void addIncreasingOrder(Word word) {
+        if (count == 0) {
+            add(word);
+        } else if (head.element.getWord().compareTo(word.getWord()) > 0) { // insercao no inicio
+            add(0, word);
+        } else if (tail.element.getWord().compareTo(word.getWord()) < 0) { // insercao no final
+            add(word);
+        } else { // insercao no meio - procurar a posicao
+            Node ant = head;
+            Node aux = head.next;
+            Node n = new Node(word);
+            while (aux != null) {
+                if (aux.element.getWord().compareTo(word.getWord()) > 0) {
+                    n.next = aux;
+                    ant.next = n;
+                    count++;
+                    break;
+                }
+                ant = aux;
+                aux = aux.next;
+            }
+        }
+
+    }
+
     /**
      * Insere um elemento em uma determinada posicao da lista
      *
      * @param index a posicao da lista onde o elemento sera inserido
-     * @param element elemento a ser inserido
+     * @param word  elemento a ser inserido
      * @throws IndexOutOfBoundsException se (index < 0 || index > size())
      */
-    @Override
-    public void add(Integer index, String element) {
+    public void add(Integer index, Word word) {
         if (index < 0 || index > size()) {
             throw new IndexOutOfBoundsException();
         }
 
-        Node n = new Node(element);
+        Node n = new Node(word);
         if (index == 0) { //insere no inicio
             n.next = head;
             head = n;
@@ -88,8 +119,7 @@ public class LinkedListOfString implements List<String>{
      * @return o elemento da posicao especificada
      * @throws IndexOutOfBoundsException se (index < 0 || index >= size())
      */
-    @Override
-    public String get(Integer index) {
+    public Word get(Integer index) {
         if ((index < 0) || (index >= count)) {
             throw new IndexOutOfBoundsException();
         }
@@ -107,12 +137,11 @@ public class LinkedListOfString implements List<String>{
      * elemento indicado
      *
      * @param index a posicao da lista
-     * @param element o elemento a ser armazenado na lista
+     * @param word  o elemento a ser armazenado na lista
      * @return o elemento armazenado anteriormente na posicao da lista
      * @throws IndexOutOfBoundsException se (index < 0 || index >= size())
      */
-    @Override
-    public String set(Integer index, String element) {
+    public Word set(Integer index, Word word) {
         if ((index < 0) || (index >= count)) {
             throw new IndexOutOfBoundsException();
         }
@@ -120,28 +149,26 @@ public class LinkedListOfString implements List<String>{
         for (int i = 0; i < index; i++) {
             aux = aux.next;
         }
-        String tmp = aux.element;
-        aux.element = element;
+        Word tmp = aux.element;
+        aux.element = word;
         return tmp;
-
     }
 
     /**
      * Remove a primeira ocorrencia do elemento na lista, se estiver presente
      *
-     * @param element o elemento a ser removido
+     * @param word o elemento a ser removido
      * @return true se a lista contem o elemento especificado
      */
-    @Override
-    public boolean remove(String element) {
-        if (element == null) {
+    public boolean remove(Word word) {
+        if (word == null) {
             return false;
         }
         if (count == 0) {
             return false;
         }
 
-        if (head.element.equals(element)) { // remocao do primeiro
+        if (head.element.equals(word)) { // remocao do primeiro
             head = head.next;
             if (count == 1) { // se havia so um elemento na lista
                 tail = null;
@@ -154,7 +181,7 @@ public class LinkedListOfString implements List<String>{
         Node aux = head.next;
 
         for (int i = 1; i < count; i++) {
-            if (aux.element.equals(element)) {
+            if (aux.element.equals(word)) {
                 if (aux == tail) { // remocao do ultimo
                     tail = ant;
                     tail.next = null;
@@ -176,7 +203,6 @@ public class LinkedListOfString implements List<String>{
      *
      * @return true se a lista nao contem elementos
      */
-    @Override
     public boolean isEmpty() {
         return (head == null);
     }
@@ -186,7 +212,6 @@ public class LinkedListOfString implements List<String>{
      *
      * @return o numero de elementos da lista
      */
-    @Override
     public Integer size() {
         return count;
     }
@@ -194,7 +219,6 @@ public class LinkedListOfString implements List<String>{
     /**
      * Esvazia a lista
      */
-    @Override
     public void clear() {
         head = null;
         tail = null;
@@ -208,8 +232,7 @@ public class LinkedListOfString implements List<String>{
      * @return o elemento que foi removido da lista
      * @throws IndexOutOfBoundsException se (index < 0 || index >= size())
      */
-    @Override
-    public String removeByIndex(Integer index) {
+    public Word removeByIndex(Integer index) {
         if (index < 0 || index >= count) {
             throw new IndexOutOfBoundsException();
         }
@@ -229,29 +252,28 @@ public class LinkedListOfString implements List<String>{
             aux = aux.next;
             c++;
         }
-        String element = aux.next.element;
+        Word word = aux.next.element;
         if (tail == aux.next) {
             tail = aux;
         }
         aux.next = aux.next.next;
         count--;
-        return element;
+        return word;
     }
 
     /**
      * Retorna o indice da primeira ocorrencia do elemento na lista, ou -1 se a
      * lista nao contem o elemento
      *
-     * @param element o elemento a ser buscado
+     * @param word o elemento a ser buscado
      * @return o indice da primeira ocorrencia do elemento na lista, ou -1 se a
      * lista nao contem o elemento
      */
-    @Override
-    public Integer indexOf(String element) {
+    public Integer indexOf(Word word) {
         int index = 0;
         Node aux = head;
         while (aux != null) {
-            if (aux.element.equals(element)) {
+            if (aux.element.equals(word)) {
                 return (index);
             }
             aux = aux.next;
@@ -260,37 +282,51 @@ public class LinkedListOfString implements List<String>{
         return -1;
     }
 
+    public Word getWord(String element) {
+        int index = 0;
+        Node aux = head;
+        while (aux != null) {
+            if (aux.element.getWord().equals(element)) {
+                return aux.element;
+            }
+            aux = aux.next;
+            index++;
+        }
+        return null;
+    }
+
     /**
      * Retorna true se a lista contem o elemento especificado
      *
-     * @param element o elemento a ser testado
+     * @param word o elemento a ser testado
      * @return true se a lista contem o elemento especificado
      */
-    @Override
-    public boolean contains(String element) {
+    public boolean contains(Word word) {
         Node aux = head;
         while (aux != null) {
-            if (aux.element.equals(element)) {
+            if (aux.element.equals(word)) {
                 return (true);
             }
             aux = aux.next;
         }
+
         return false;
     }
 
-    @Override
-    public String toString() {
-        StringBuilder s = new StringBuilder();
+    public Integer getFrequentlyWordOccurrencesCount() {
+        return frequentlyWordOccurrencesCount;
+    }
 
-        Node aux = head;
+    public String getFrequentlyWord() {
+        return frequentlyWord;
+    }
 
-        while (aux != null) {
-            s.append(aux.element.toString());
-            s.append("\n");
-            aux = aux.next;
-        }
+    public void setFrequentlyWord(String frequentlyWord) {
+        this.frequentlyWord = frequentlyWord;
+    }
 
-        return s.toString();
+    public void setFrequentlyWordOccurrencesCount(Integer frequentlyWordOccurrencesCount) {
+        this.frequentlyWordOccurrencesCount = frequentlyWordOccurrencesCount;
     }
 
 }

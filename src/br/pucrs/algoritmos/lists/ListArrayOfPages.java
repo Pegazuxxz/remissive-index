@@ -1,17 +1,17 @@
 package br.pucrs.algoritmos.lists;
 
-import br.pucrs.algoritmos.line.Word;
+import br.pucrs.algoritmos.line.Page;
 
-public class ListArrayOfWords implements List<Word> {
+public class ListArrayOfPages implements List<Page> {
 
     private static final int INITIAL_SIZE = 10;
-    private Word[] data;
+    private Page[] data;
     private int count;
 
     /**
      * Construtor da lista
      */
-    public ListArrayOfWords() {
+    public ListArrayOfPages() {
         this(INITIAL_SIZE);
     }
 
@@ -20,11 +20,11 @@ public class ListArrayOfWords implements List<Word> {
      *
      * @param tam tamanho inicial a ser alocado para a lista
      */
-    public ListArrayOfWords(int tam) {
+    public ListArrayOfPages(int tam) {
         if (tam <= 0) {
             tam = INITIAL_SIZE;
         }
-        data = new Word[tam];
+        data = new Page[tam];
         count = 0;
     }
 
@@ -33,7 +33,7 @@ public class ListArrayOfWords implements List<Word> {
      */
     @Override
     public void clear() {
-        data = new Word[INITIAL_SIZE];
+        data = new Page[INITIAL_SIZE];
         count = 0;
     }
 
@@ -63,7 +63,7 @@ public class ListArrayOfWords implements List<Word> {
      * @param element elemento a ser adicionado ao final da lista
      */
     @Override
-    public void add(Word element) {
+    public void add(Page element) {
         if (count == data.length) {
             setCapacity(data.length * 2);
         }
@@ -79,7 +79,7 @@ public class ListArrayOfWords implements List<Word> {
      * @throws IndexOutOfBoundsException se (index < 0 || index > size())
      */
     @Override
-    public void add(Integer index, Word element) {
+    public void add(Integer index, Page element) {
 
         if (index < 0 || index > size()) {
             throw new IndexOutOfBoundsException();
@@ -104,12 +104,12 @@ public class ListArrayOfWords implements List<Word> {
      * @throws IndexOutOfBoundsException se (index < 0 || index >= size())
      */
     @Override
-    public Word removeByIndex(Integer index) {
+    public Page removeByIndex(Integer index) {
         if (index < 0 || index >= size()) {
             throw new IndexOutOfBoundsException();
         }
 
-        Word aux = data[index];
+        Page aux = data[index];
 
         for (int i = index; i < count - 1; i++) {
             data[i] = data[i + 1];
@@ -128,7 +128,7 @@ public class ListArrayOfWords implements List<Word> {
      * @return true se a lista contém o elemento especificado
      */
     @Override
-    public boolean remove(Word element) {
+    public boolean remove(Page element) {
 
         for (int i = 0; i < count; i++) {
 
@@ -152,11 +152,21 @@ public class ListArrayOfWords implements List<Word> {
      * @throws IndexOutOfBoundsException se (index < 0 || index >= size())
      */
     @Override
-    public Word get(Integer index) {
+    public Page get(Integer index) {
         if ((index < 0) || (index >= count)) {
             throw new IndexOutOfBoundsException("Index = " + index);
         }
         return data[index];
+    }
+
+    public Page get(int pageNumber) {
+        for (int i = 0; i < count; i++) {
+            if (data[i].getPageNumber() == pageNumber) {
+                return data[i];
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -169,11 +179,11 @@ public class ListArrayOfWords implements List<Word> {
      * @throws IndexOutOfBoundsException se (index < 0 || index >= size())
      */
     @Override
-    public Word set(Integer index, Word element) {
+    public Page set(Integer index, Page element) {
         if ((index < 0) || (index >= count)) {
             throw new IndexOutOfBoundsException("Index = " + index);
         }
-        Word item = data[index];
+        Page item = data[index];
         data[index] = element;
         return item;
     }
@@ -185,9 +195,9 @@ public class ListArrayOfWords implements List<Word> {
      * @return true se a lista contém o elemento especificado
      */
     @Override
-    public boolean contains(Word element) {
+    public boolean contains(Page element) {
         for (int p = 0; p < count; p++) {
-            if (data[p].getWord().contains(element.getWord())) {
+            if (data[p].getPageNumber().equals(element.getPageNumber())) {
                 return true;
             }
         }
@@ -204,7 +214,7 @@ public class ListArrayOfWords implements List<Word> {
      * lista não contém o elemento
      */
     @Override
-    public Integer indexOf(Word element) {
+    public Integer indexOf(Page element) {
         // Procura elemento no array, se achar retorna
         for (int i = 0; i < count; i++) {
             if (data[i].equals(element)) {
@@ -215,26 +225,11 @@ public class ListArrayOfWords implements List<Word> {
         return -1;
     }
 
-    public Word getWord(Word element) {
-        // Procura elemento no array, se achar retorna
-        for (int i = 0; i < count; i++) {
-            if (data[i].getWord().equals(element)) {
-                return data[i];
-            }
-        }
-        // Neste ponto, não achou: retorna -1
-        return null;
-    }
-
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();
         for (int i = 0; i < count; i++) {
-            Word word = data[i];
-            s.append(word.toString());
-            if (i != (count - 1)) {
-                s.append("\n");
-            }
+            s.append(data[i].toString());
         }
         s.append("\n");
         return s.toString();
@@ -243,7 +238,7 @@ public class ListArrayOfWords implements List<Word> {
     private void setCapacity(int newCapacity) {
         if (newCapacity != data.length) {
             int min = 0;
-            Word[] newData = new Word[newCapacity];
+            Page[] newData = new Page[newCapacity];
             if (data.length < newCapacity) {
                 min = data.length;
             } else {
