@@ -5,6 +5,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.DecimalFormat;
 import java.util.InputMismatchException;
 import java.util.Objects;
 import java.util.Scanner;
@@ -19,15 +20,15 @@ public class Readers {
     private static final String STOP_WORDS_FILE = STANDARD_PATH + "/stopwords.txt";
     private static final String TEST_FILE = STANDARD_PATH + "/teste-words.txt";
 
-    private Integer countLetters;
-    private Integer countStopWords;
+    private Float countLetters;
+    private Float countStopWords;
     private Integer bookLines = 0;
     private String fileChosen;
     private ListArrayOfString textPages;
 
     public Readers() {
-        this.countStopWords = 0;
-        this.countLetters = 0;
+        this.countStopWords = 0.0F;
+        this.countLetters = 0.0F;
         textPages = new ListArrayOfString();
     }
 
@@ -158,7 +159,12 @@ public class Readers {
 
 
     public String getStopWordsPercentage() {
-        return Double.valueOf((countStopWords * 100) / countLetters)
+        System.out.println(countStopWords);
+        System.out.println(countLetters);
+        Float total = (countStopWords * 100) / countLetters;
+        DecimalFormat format = new DecimalFormat("#0.00");
+        
+        return format.format(total)
                 .toString()
                 .concat("%");
     }
