@@ -159,11 +159,9 @@ public class Readers {
 
 
     public String getStopWordsPercentage() {
-        System.out.println(countStopWords);
-        System.out.println(countLetters);
         Float total = (countStopWords * 100) / countLetters;
         DecimalFormat format = new DecimalFormat("#0.00");
-        
+
         return format.format(total)
                 .toString()
                 .concat("%");
